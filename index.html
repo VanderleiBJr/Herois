@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Heróis</title>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .hero-card {
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .hero-image {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="heroes-container">
+        
+    </div>
+
+    <script>
+        fetch('https://akabab.github.io/superhero-api/api/all.json')
+            .then(response => response.json())
+            .then(data => {
+                const heroesContainer = document.getElementById('heroes-container');
+
+                data.forEach(hero => {
+                    const heroCard = document.createElement('div');
+                    heroCard.classList.add('hero-card');
+
+                    const heroImage = document.createElement('img');
+                    heroImage.classList.add('hero-image');
+                    heroImage.src = hero.images.sm;
+                    heroImage.alt = hero.name;
+
+                    const heroName = document.createElement('h2');
+                    heroName.textContent = hero.name;
+
+                    const heroFullName = document.createElement('p');
+                    heroFullName.innerHTML = '<strong>Nome Completo:</strong> ' + (hero.biography["full-name"] || "N/A");
+
+                    const heroFirstAppearance = document.createElement('p');
+                    heroFirstAppearance.innerHTML = '<strong>Primeira Aparição:</strong> ' + (hero.biography["first-appearance"] || "N/A");
+
+                    const heroPublisher = document.createElement('p');
+                    heroPublisher.innerHTML = '<strong>Publisher:</strong> ' + (hero.biography.publisher || "N/A");
+
+                    const heroStats = document.createElement('div');
+                    Object.entries(hero.powerstats).forEach(([key, value]) => {
+                        const stat = document.createElement('p');
+                        stat.innerHTML = '<strong>' + key + ':</strong> ' + (value || "N/A");
+                        heroStats.appendChild(stat);
+                    });
+
+                    heroCard.appendChild(heroName);
+                    heroCard.appendChild(heroImage);
+                    heroCard.appendChild(heroFullName);
+                    heroCard.appendChild(heroFirstAppearance);
+                    heroCard.appendChild(heroPublisher);
+                    heroCard.appendChild(heroStats);
+                    heroesContainer.appendChild(heroCard);
+                });
+            })
+            .catch(error => console.error('Erro ao buscar os super heróis:', error));
+    </script>
+</body>
+</html>
